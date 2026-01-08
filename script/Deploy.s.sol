@@ -18,13 +18,10 @@ contract DeployTranscriptChain is Script {
     function run() external {
         // Get deployment private key from environment
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        address deployer = vm.addr(deployerPrivateKey);
         
         console.log("==============================================");
         console.log("TRANSCRIPTCHAIN DEPLOYMENT SCRIPT");
         console.log("==============================================");
-        console.log("Deployer address:", deployer);
-        console.log("Deployer balance:", deployer.balance);
         console.log("Chain ID:", block.chainid);
         console.log("==============================================");
         
