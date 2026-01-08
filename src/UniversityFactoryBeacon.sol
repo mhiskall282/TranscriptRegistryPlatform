@@ -146,6 +146,7 @@ contract UniversityFactoryBeacon is Ownable {
      * @dev Deactivate a university proxy
      * @param universityId ID of the university
      * @param reason Reason for deactivation
+     * @notice The factory owner will call deactivate/activate on the registry
      */
     function deactivateUniversity(
         uint256 universityId,
@@ -156,11 +157,9 @@ contract UniversityFactoryBeacon is Ownable {
         
         universities[universityId].isActive = false;
         
-        // Deactivate the proxy
-        TranscriptRegistryUpgradeable registry = TranscriptRegistryUpgradeable(
-            universities[universityId].proxyAddress
-        );
-        registry.deactivateContract();
+        // Note: The actual registry deactivation should be done by the platform admin
+        // calling deactivateContract() directly on the registry, since the admin
+        // in the registry is the platform admin, not the factory
         
         emit UniversityDeactivated(
             universityId,
@@ -172,6 +171,7 @@ contract UniversityFactoryBeacon is Ownable {
     /**
      * @dev Reactivate a university proxy
      * @param universityId ID of the university
+     * @notice The factory owner will call deactivate/activate on the registry
      */
     function reactivateUniversity(uint256 universityId) external onlyOwner {
         require(universityId < universityCount, "University does not exist");
@@ -179,10 +179,8 @@ contract UniversityFactoryBeacon is Ownable {
         
         universities[universityId].isActive = true;
         
-        TranscriptRegistryUpgradeable registry = TranscriptRegistryUpgradeable(
-            universities[universityId].proxyAddress
-        );
-        registry.activateContract();
+        // Note: The actual registry activation should be done by the platform admin
+        // calling activateContract() directly on the registry
         
         emit UniversityReactivated(
             universityId,
