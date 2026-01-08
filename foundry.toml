@@ -1,33 +1,26 @@
+############################
+# DEFAULT PROFILE
+############################
 [profile.default]
 src = "src"
 out = "out"
 libs = ["lib"]
-solc_version = "0.8.20"
+solc_version = "0.8.23"
+ffi = true
 
-# Remappings for OpenZeppelin
-remappings = [
-    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
-    "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/"
-]
-
-# Optimizer settings
+# Optimizer
 optimizer = true
 optimizer_runs = 200
 
-# Test configuration
-[profile[profile.default]
-src = "src"
-out = "out"
-libs = ["lib"]
-solc_version = "0.8.20"
-
-# Remappings for OpenZeppelin
+# OpenZeppelin remappings
 remappings = [
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
     "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/"
 ]
 
-# Test configuration
+############################
+# FUZZ & INVARIANT TESTING
+############################
 [profile.default.fuzz]
 runs = 256
 
@@ -35,8 +28,10 @@ runs = 256
 runs = 256
 depth = 15
 
-# Formatter
-[profile.default.fmt]
+############################
+# FORMATTER
+############################
+[fmt]
 line_length = 100
 tab_width = 4
 bracket_spacing = true
@@ -45,41 +40,33 @@ multiline_func_header = "all"
 quote_style = "double"
 number_underscore = "thousands"
 
-# RPC endpoints for testing
+############################
+# RPC ENDPOINTS
+############################
 [rpc_endpoints]
 sepolia = "${SEPOLIA_RPC_URL}"
 base_sepolia = "https://sepolia.base.org"
 
-# Etherscan API keys for verification
+############################
+# BLOCK EXPLORER KEYS
+############################
 [etherscan]
 sepolia = { key = "${ETHERSCAN_API_KEY}" }
 base_sepolia = { key = "${BASESCAN_API_KEY}" }
 
-# CI Profile - Optimized for GitHub Actions
+############################
+# CI PROFILE (GitHub Actions)
+############################
 [profile.ci]
-fuzz = { runs = 512 }
 verbosity = 3
 gas_reports = ["*"]
 
-# Profile for coverage
+[profile.ci.fuzz]
+runs = 512
+
+############################
+# COVERAGE PROFILE
+############################
 [profile.coverage]
 via_ir = false
-
-# Optimizer settings
-[profile.default.optimizer]
-enabled = true
-runs = 200
-
-[profile.default.optimizer_details]
-peephole = true
-inliner = true
-jumpdestRemover = true
-orderLiterals = true
-deduplicate = true
-cse = true
-constantOptimizer = true
-yul = true
-
-[profile.default.optimizer_details.yulDetails]
-stackAllocation = true
-optimizerSteps = "dhfoDgvulfnTUtnIf"
+optimizer = true
