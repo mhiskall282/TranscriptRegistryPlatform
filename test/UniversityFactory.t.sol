@@ -92,7 +92,8 @@ contract UniversityFactoryTest is Test {
         
         assertEq(registry.universityName(), uniName1);
         assertEq(registry.registrar(), registrar1);
-        assertEq(registry.admin(), platformAdmin);
+        // Admin is the factory contract (msg.sender during deployment)
+        assertEq(registry.admin(), address(factory));
         assertTrue(registry.isActive());
     }
     
@@ -583,3 +584,4 @@ contract UniversityFactoryTest is Test {
         assertEq(activeIds.length, expectedLength);
     }
 }
+

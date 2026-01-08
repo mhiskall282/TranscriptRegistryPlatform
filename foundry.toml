@@ -13,7 +13,7 @@ runs = 256
 depth = 15
 
 # Code coverage
-[coverage]
+[profile.coverage]
 verbosity = 3
 
 # Formatter
