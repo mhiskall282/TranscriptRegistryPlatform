@@ -243,6 +243,13 @@ contract UniversityFactoryBeaconTest is Test {
         
         uniInfo = factory.getUniversity(universityId);
         assertFalse(uniInfo.isActive);
+        
+        // Factory only tracks status, admin must deactivate registry separately
+        assertTrue(registry.isActive());
+        
+        // Platform admin deactivates the registry directly
+        vm.prank(platformAdmin);
+        registry.deactivateContract();
         assertFalse(registry.isActive());
     }
     
