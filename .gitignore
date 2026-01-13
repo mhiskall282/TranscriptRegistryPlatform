@@ -49,3 +49,7 @@ typechain-types/
 
 # Build info
 build-info/
+# Coverage reports
+lcov.info
+coverage/
+*.lcov
