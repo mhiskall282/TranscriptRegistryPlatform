@@ -31,8 +31,9 @@ contract TestGrantAccess is Script {
         
         console.log("\nGranting access to verifier...");
         
-        // Grant access to the verifier
-        registry.grantAccess(recordId, verifierAddress);
+        // Grant access to the verifier for 30 days (2592000 seconds)
+        uint256 duration = 30 days;
+        registry.grantAccess(recordId, verifierAddress, duration);
         
         vm.stopBroadcast();
         
@@ -40,8 +41,8 @@ contract TestGrantAccess is Script {
         console.log("ACCESS GRANTED SUCCESSFULLY!");
         console.log("==============================================");
         
-        // Verify the access was granted
-        bool hasAccess = registry.hasAccess(recordId, verifierAddress);
+        // Verify the access was granted using checkAccess instead of hasAccess
+        bool hasAccess = registry.checkAccess(recordId, verifierAddress);
         console.log("\nVerification:");
         console.log("  Verifier has access:", hasAccess);
         console.log("==============================================");
@@ -68,8 +69,8 @@ contract TestVerifyTranscript is Script {
         
         TranscriptRegistry registry = TranscriptRegistry(registryAddress);
         
-        // Check if verifier has access
-        bool hasAccess = registry.hasAccess(recordId, verifierAddress);
+        // Check if verifier has access using checkAccess
+        bool hasAccess = registry.checkAccess(recordId, verifierAddress);
         console.log("\nAccess Check:");
         console.log("  Verifier has access:", hasAccess);
         
@@ -79,39 +80,48 @@ contract TestVerifyTranscript is Script {
             return;
         }
         
-        // Start broadcasting transactions as the verifier
-        vm.startBroadcast(verifierPrivateKey);
-        
-        console.log("\nVerifying transcript...");
-        
-        // Verify the transcript
-        registry.verifyTranscript(recordId);
-        
-        vm.stopBroadcast();
-        
-        console.log("\n==============================================");
-        console.log("TRANSCRIPT VERIFIED SUCCESSFULLY!");
-        console.log("==============================================");
-        
-        // Get the updated record
+        // Get the transcript to get the fileHash
         (
             bytes32 studentHash,
             string memory metadataCID,
             bytes32 fileHash,
             address issuer,
             uint256 timestamp,
-            TranscriptRegistry.RecordStatus status,
-            uint256 verificationCount
-        ) = registry.getRecord(recordId);
+            
+        ) = registry.getTranscript(recordId);
         
-        console.log("\nUpdated Record Details:");
+        console.log("\nTranscript Details Before Verification:");
         console.log("  Student Hash:", vm.toString(studentHash));
         console.log("  Metadata CID:", metadataCID);
         console.log("  File Hash:", vm.toString(fileHash));
         console.log("  Issuer:", issuer);
         console.log("  Timestamp:", timestamp);
-        console.log("  Status:", status == TranscriptRegistry.RecordStatus.Active ? "Active" : status == TranscriptRegistry.RecordStatus.Revoked ? "Revoked" : "Suspended");
-        console.log("  Verification Count:", verificationCount);
+        
+        // Start broadcasting transactions as the verifier
+        vm.startBroadcast(verifierPrivateKey);
+        
+        console.log("\nVerifying transcript...");
+        
+        // Verify the transcript with the fileHash
+        bool isValid = registry.verifyTranscript(recordId, fileHash);
+        
+        vm.stopBroadcast();
+        
+        console.log("\n==============================================");
+        if (isValid) {
+            console.log("TRANSCRIPT VERIFIED SUCCESSFULLY!");
+        } else {
+            console.log("TRANSCRIPT VERIFICATION FAILED!");
+        }
+        console.log("==============================================");
+        
+        // Get the updated stats
+        (uint256 totalTranscripts, uint256 totalVerifications, bool contractActive) = registry.getContractStats();
+        
+        console.log("\nContract Statistics:");
+        console.log("  Total Transcripts:", totalTranscripts);
+        console.log("  Total Verifications:", totalVerifications);
+        console.log("  Contract Active:", contractActive);
         console.log("==============================================");
     }
 }
@@ -138,8 +148,8 @@ contract TestRevokeAccess is Script {
         
         TranscriptRegistry registry = TranscriptRegistry(registryAddress);
         
-        // Check current access
-        bool hasAccessBefore = registry.hasAccess(recordId, verifierAddress);
+        // Check current access using checkAccess
+        bool hasAccessBefore = registry.checkAccess(recordId, verifierAddress);
         console.log("\nBefore Revocation:");
         console.log("  Verifier has access:", hasAccessBefore);
         
@@ -157,8 +167,8 @@ contract TestRevokeAccess is Script {
         console.log("ACCESS REVOKED SUCCESSFULLY!");
         console.log("==============================================");
         
-        // Verify the access was revoked
-        bool hasAccessAfter = registry.hasAccess(recordId, verifierAddress);
+        // Verify the access was revoked using checkAccess
+        bool hasAccessAfter = registry.checkAccess(recordId, verifierAddress);
         console.log("\nAfter Revocation:");
         console.log("  Verifier has access:", hasAccessAfter);
         console.log("==============================================");

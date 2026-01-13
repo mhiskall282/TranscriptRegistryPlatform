@@ -69,4 +69,5 @@ runs = 512
 ############################
 [profile.coverage]
 via_ir = false
-optimizer = true
+optimizer = false
+no_match_path = "src/UniversityFactoryBeacon.sol|script/TestDeployedContracts.s.sol"

@@ -64,8 +64,12 @@ contract TestRegisterTranscript is Script {
             bytes32 retrievedFileHash,
             address issuer,
             uint256 timestamp,
-            TranscriptRegistryUpgradeable.Status status
+            
         ) = registry.getTranscript(recordId);
+        
+        // Get status separately to avoid enum type issues
+        uint8 statusValue;
+        (,,,,,statusValue) = registry.getTranscript(recordId);
         
         console.log("\nVerification:");
         console.log("Student Hash Match:", retrievedStudentHash == studentHash);
@@ -73,7 +77,7 @@ contract TestRegisterTranscript is Script {
         console.log("File Hash Match:", retrievedFileHash == fileHash);
         console.log("Issuer:", issuer);
         console.log("Timestamp:", timestamp);
-        console.log("Status:", uint8(status) == 0 ? "Active" : "Other");
+        console.log("Status (0=Active, 1=Revoked, 2=Amended):", statusValue);
         
         console.log("\nView on Etherscan:");
         console.log("https://sepolia.etherscan.io/address/", registryAddress);
@@ -82,10 +86,10 @@ contract TestRegisterTranscript is Script {
 }
 
 /**
- * @title TestGrantAccess
- * @dev Test script for student to grant access to a verifier
+ * @title TestGrantAccessUpgradeable
+ * @dev Test script for student to grant access to a verifier (Upgradeable version)
  */
-contract TestGrantAccess is Script {
+contract TestGrantAccessUpgradeable is Script {
     
     function run() external {
         // Load from environment
@@ -131,10 +135,10 @@ contract TestGrantAccess is Script {
 }
 
 /**
- * @title TestVerifyTranscript
- * @dev Test script for verifier to verify a transcript
+ * @title TestVerifyTranscriptUpgradeable
+ * @dev Test script for verifier to verify a transcript (Upgradeable version)
  */
-contract TestVerifyTranscript is Script {
+contract TestVerifyTranscriptUpgradeable is Script {
     
     function run() external {
         address verifierAddress = vm.envAddress("TEST_VERIFIER_ADDRESS");
