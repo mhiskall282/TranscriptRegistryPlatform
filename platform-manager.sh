@@ -6,3 +6,7 @@
 # Comprehensive CLI tool to manage all smart contract features
 # Author: Your Name
 # Version: 1.0.0
+# ================================================================
+
+set -e
+
