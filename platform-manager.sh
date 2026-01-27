@@ -76,6 +76,9 @@ load_env() {
   else
     print_warning ".env file not found. Some features may not work."
   fi
+  # Set RPC_URL AFTER loading env
+    RPC_URL="${BASE_SEPOLIA_RPC_URL:-$SEPOLIA_RPC_URL}"
+    export RPC_URL
 }
 
 ################################################################################
@@ -222,9 +225,13 @@ get_platform_stats() {
         "getPlatformStats()(uint256,uint256)" \
         --rpc-url "$BASE_SEPOLIA_RPC_URL")
     
-    # Parse the tuple
-    total_unis=$(echo "$stats" | awk '{print $1}')
-    active_unis=$(echo "$stats" | awk '{print $2}')
+    # Parse the tuple (cast returns 2 lines)
+total_unis=$(echo "$stats" | sed -n '1p' | tr -d '\r')
+active_unis=$(echo "$stats" | sed -n '2p' | tr -d '\r')
+
+# Safety defaults
+total_unis=${total_unis:-0}
+active_unis=${active_unis:-0}
     
     echo ""
     echo -e "${GREEN}Total Universities:${NC} $total_unis"
@@ -239,26 +246,77 @@ get_platform_stats() {
     echo -e "${BLUE}Current Implementation:${NC} $impl"
 }
 
+# list_active_universities() {
+#     print_header "ACTIVE UNIVERSITIES"
+    
+#     if [ -z "$FACTORY_ADDRESS" ]; then
+#         print_error "FACTORY_ADDRESS not set"
+#         return 1
+#     fi
+    
+#     # Get offset and limit from arguments or use defaults
+#     offset=${1:-0}
+#     limit=${2:-10}
+    
+#     print_info "Fetching universities (offset: $offset, limit: $limit)..."
+    
+#     # Get active university IDs
+#     active_ids=$(cast call "$FACTORY_ADDRESS" \
+#         "getActiveUniversities(uint256,uint256)(uint256[])" \
+#         "$offset" "$limit" \
+#         --rpc-url "$BASE_SEPOLIA_RPC_URL")
+    
+#     echo ""
+#     echo -e "${GREEN}Active University IDs:${NC}"
+#     echo "$active_ids"
+# }
+
 list_active_universities() {
     print_header "ACTIVE UNIVERSITIES"
-    
+
     if [ -z "$FACTORY_ADDRESS" ]; then
         print_error "FACTORY_ADDRESS not set"
         return 1
     fi
-    
+
     # Get offset and limit from arguments or use defaults
     offset=${1:-0}
     limit=${2:-10}
-    
+
+    # Get platform stats first to avoid "Offset out of bounds"
+    stats=$(cast call "$FACTORY_ADDRESS" \
+        "getPlatformStats()(uint256,uint256)" \
+        --rpc-url "$RPC_URL")
+
+    # cast returns 2 lines
+    total_unis=$(echo "$stats" | sed -n '1p' | tr -d '\r')
+    active_unis=$(echo "$stats" | sed -n '2p' | tr -d '\r')
+
+    # Safety defaults
+    total_unis=${total_unis:-0}
+    active_unis=${active_unis:-0}
+
+    if [ "$active_unis" -eq 0 ]; then
+        echo ""
+        print_warning "No active universities found yet."
+        print_info "Run option 2 (Deploy University Proxies) or option 7 (Deploy New University) first."
+        return 0
+    fi
+
+    # Clamp offset to valid range
+    if [ "$offset" -ge "$active_unis" ]; then
+        print_warning "Offset ($offset) is out of bounds. Max offset is $((active_unis - 1)). Resetting to 0."
+        offset=0
+    fi
+
     print_info "Fetching universities (offset: $offset, limit: $limit)..."
-    
+
     # Get active university IDs
     active_ids=$(cast call "$FACTORY_ADDRESS" \
         "getActiveUniversities(uint256,uint256)(uint256[])" \
         "$offset" "$limit" \
-        --rpc-url "$BASE_SEPOLIA_RPC_URL")
-    
+        --rpc-url "$RPC_URL")
+
     echo ""
     echo -e "${GREEN}Active University IDs:${NC}"
     echo "$active_ids"
