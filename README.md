@@ -179,7 +179,7 @@ Contributions are welcome! Please follow these steps:
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work* - [@YourGithub](https://github.com/YOUR_USERNAME)
+- **Your Name** - *Initial work* - [@mhiskall282](https://github.com/mhiskall282)
 
 ## 🙏 Acknowledgments
 
@@ -189,7 +189,7 @@ Contributions are welcome! Please follow these steps:
 
 ## 📞 Support
 
-For support, email your-email@example.com or open an issue on GitHub.
+For support, email johnokyere282@icloud.com or open an issue on GitHub.
 
 ---
 
