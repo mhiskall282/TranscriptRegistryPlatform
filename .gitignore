@@ -49,3 +49,5 @@ typechain-types/
 
 # Build info
 build-info/
+lib/forge-std
+/lib
