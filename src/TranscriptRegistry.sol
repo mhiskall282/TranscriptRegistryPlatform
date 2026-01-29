@@ -400,4 +400,3 @@ contract TranscriptRegistry {
     {
         return (transcriptCount, verificationCount, isActive);
     }
-// commit-marker-65
