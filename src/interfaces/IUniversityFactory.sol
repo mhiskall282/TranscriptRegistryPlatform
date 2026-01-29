@@ -121,4 +121,3 @@ interface IUniversityFactory {
         external
         view
         returns (uint256 totalUniversities, uint256 activeCount);
-// commit-marker-28
