@@ -126,21 +126,33 @@
   }
 }
 
-/* ─── TranscriptChain Design System ──────────────────────────── */
+/* ─── CredAxis Design System ──────────────────────────────────── */
 
 :root {
+  --tc-bg: #ffffff;
+  --tc-surface: #f5f6fa;
+  --tc-surface-2: #eaecf4;
+  --tc-border: rgba(0, 0, 0, 0.08);
+  --tc-gold: #c9933f;
+  --tc-gold-light: #e8b65a;
+  --tc-teal: #0a9b79;
+  --tc-text: #0f1117;
+  --tc-muted: #6b7280;
+}
+
+body {
+  background: var(--tc-bg);
+}
+
+/* Dark-only sections (Hero, decorative backgrounds) */
+.dark-section {
   --tc-bg: #070a10;
   --tc-surface: #0d1219;
   --tc-surface-2: #141b26;
   --tc-border: rgba(255, 255, 255, 0.08);
-  --tc-gold: #c9933f;
-  --tc-gold-light: #e8b65a;
   --tc-teal: #0bc49a;
   --tc-text: #eef0f7;
   --tc-muted: #5a6070;
-}
-
-body {
   background: var(--tc-bg);
 }
 
@@ -148,6 +160,15 @@ body {
   background-image: radial-gradient(
     circle,
     rgba(255, 255, 255, 0.055) 1px,
+    transparent 1px
+  );
+  background-size: 28px 28px;
+}
+
+.dot-grid-light {
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.06) 1px,
     transparent 1px
   );
   background-size: 28px 28px;
